@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}HireIQ - Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-glow">
+        <div class="hero-icon">
+            <div class="hero-outer"></div>
+            <div class="hero-inner"></div>
+        </div>
+        <h1 class="hero-title">
+            <span class="hire">Hire</span><span class="iq">IQ</span>
+        </h1>
+        <p class="hero-subtitle">AI-Powered Hiring Assistant</p>
+        <p class="hero-description">
+            Screen CVs faster, fairer and smarter — powered by advanced AI technology designed for Pakistani startups and SMEs
+        </p>
+    </div>
+</div>
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-label">Time Saved</div>
+        <div class="metric-value">80%</div>
+        <div class="metric-delta">vs manual screening</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Accuracy</div>
+        <div class="metric-value">95%</div>
+        <div class="metric-delta">skill matching</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Bias Checks</div>
+        <div class="metric-value">5 Types</div>
+        <div class="metric-delta">detected automatically</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Cost</div>
+        <div class="metric-value">FREE</div>
+        <div class="metric-delta">no subscription needed</div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<div class="page-header">
+    <div class="page-header-wrapper" style="text-align: center; justify-content: center;">
+        <h2 style="font-size: 2rem; font-weight: 700;">Platform Capabilities</h2>
+    </div>
+    <p style="text-align: center; color: var(--text-secondary);">Everything you need for smarter hiring decisions</p>
+</div>
+
+<div class="grid-2">
+    <div class="feature-card">
+        <div class="feature-header">
+            <div class="feature-icon accent">◆</div>
+            <div>
+                <h3 class="feature-title">CV Screening</h3>
+                <p class="feature-subtitle">AI-powered candidate analysis</p>
+            </div>
+        </div>
+        <ul class="feature-list">
+            <li>Paste CV + Job Description</li>
+            <li>AI scores candidate match</li>
+            <li>Shows matched & missing skills</li>
+            <li>Gives Hire/Maybe/Reject verdict</li>
+            <li>Full analysis with explanations</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-header">
+            <div class="feature-icon secondary">○</div>
+            <div>
+                <h3 class="feature-title">Candidate Dashboard</h3>
+                <p class="feature-subtitle">Compare multiple candidates</p>
+            </div>
+        </div>
+        <ul class="feature-list">
+            <li>Compare up to 5 candidates</li>
+            <li>Visual bar chart comparison</li>
+            <li>Automatic ranking by score</li>
+            <li>Side by side skill analysis</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-header">
+            <div class="feature-icon secondary">▶</div>
+            <div>
+                <h3 class="feature-title">Interview Questions</h3>
+                <p class="feature-subtitle">Smart question generation</p>
+            </div>
+        </div>
+        <ul class="feature-list">
+            <li>Auto-generated from CV gaps</li>
+            <li>3 difficulty levels</li>
+            <li>Skill verification questions</li>
+            <li>Behavioral questions included</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-header">
+            <div class="feature-icon warning">◇</div>
+            <div>
+                <h3 class="feature-title">Bias Detector</h3>
+                <p class="feature-subtitle">Ensure fair hiring practices</p>
+            </div>
+        </div>
+        <ul class="feature-list">
+            <li>Detects 5 types of bias</li>
+            <li>Age, Gender, Origin detection</li>
+            <li>Fairness score calculated</li>
+            <li>Improvement suggestions</li>
+        </ul>
+    </div>
+</div>
+
+<hr class="divider">
+
+<div class="page-header">
+    <div class="page-header-wrapper" style="text-align: center; justify-content: center;">
+        <h2 style="font-size: 2rem; font-weight: 700;">How It Works</h2>
+    </div>
+    <p style="text-align: center; color: var(--text-secondary);">Three simple steps to better hiring</p>
+</div>
+
+<div class="grid-3">
+    <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-icon primary">1</div>
+        <h3 class="step-title">Input Data</h3>
+        <p class="step-description">Paste your Job Description and Candidate CV into the system</p>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-icon primary">2</div>
+        <h3 class="step-title">AI Analysis</h3>
+        <p class="step-description">Our AI analyzes skills, scores the match, and detects potential bias</p>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-icon accent">3</div>
+        <h3 class="step-title">Get Results</h3>
+        <p class="step-description">Receive instant Hire/Maybe/Reject recommendations with full explanations</p>
+    </div>
+</div>
+
+<div class="app-footer">
+    <div class="footer-status">
+        <div class="footer-dot"></div>
+        <span class="status-text">Built for Pakistani Businesses</span>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+        Powered by AI & Hugging Face
+    </p>
+    <p class="footer-tagline">HireIQ — Making hiring faster, fairer and smarter</p>
+</div>
+{% endblock %}

@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}HireIQ - Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-wrapper">
+        <div class="page-icon">○</div>
+        <div>
+            <h1 class="page-title">Candidates Dashboard</h1>
+            <p class="page-subtitle">Compare multiple candidates and make data-driven hiring decisions</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon secondary">◆</div>
+        <div>
+            <h3 class="card-title">Job Description</h3>
+            <p class="card-subtitle">Enter the role requirements for comparison</p>
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom: 0;">
+        <textarea 
+            id="jobDescription" 
+            class="form-textarea" 
+            placeholder="e.g. We need a Python developer with ML experience..."
+            style="height: 150px;"
+        ></textarea>
+    </div>
+</div>
+
+<div class="grid-2" style="margin-top: 1.5rem; align-items: end;">
+    <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Number of Candidates</label>
+        <select id="numCandidates" class="form-select">
+            <option value="2">2 Candidates</option>
+            <option value="3" selected>3 Candidates</option>
+            <option value="4">4 Candidates</option>
+            <option value="5">5 Candidates</option>
+        </select>
+    </div>
+</div>
+
+<hr class="divider">
+
+<div class="page-header" style="margin-bottom: 1rem;">
+    <h3 style="color: var(--text); font-weight: 600;">Candidate Information</h3>
+</div>
+
+<div id="candidatesContainer">
+    <!-- Candidate forms will be generated here -->
+</div>
+
+<div style="text-align: center; margin: 2rem 0;">
+    <button id="compareBtn" class="btn btn-primary btn-full" style="max-width: 400px;">
+        Compare All Candidates
+    </button>
+</div>
+
+<div id="loadingSpinner" class="spinner"></div>
+
+<div id="resultsContainer" class="hidden">
+    <hr class="divider">
+
+    <div class="page-header">
+        <div class="page-header-wrapper">
+            <div class="card-icon primary">◆</div>
+            <div>
+                <h2 class="page-title">Candidate Rankings</h2>
+                <p class="page-subtitle">Sorted by match score</p>
+            </div>
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Match Score</th>
+                <th>Matched</th>
+                <th>Missing</th>
+                <th>Verdict</th>
+            </tr>
+        </thead>
+        <tbody id="rankingsBody">
+        </tbody>
+    </table>
+
+    <div class="page-header" style="margin-top: 2rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 600;">Score Comparison</h3>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="comparisonChart" height="200"></canvas>
+    </div>
+
+    <hr class="divider">
+
+    <div class="page-header">
+        <div class="page-header-wrapper">
+            <div class="card-icon warning" style="background: linear-gradient(135deg, var(--warning) 0%, #FF8C00 100%); width: 40px; height: 40px;">
+                <span style="color: white;">★</span>
+            </div>
+            <h2 class="page-title">Top Candidate</h2>
+        </div>
+    </div>
+
+    <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="metric-card">
+            <div class="metric-label">Best Candidate</div>
+            <div id="topName" class="metric-value" style="font-size: 1.5rem;">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Match Score</div>
+            <div id="topScore" class="metric-value">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Skills Matched</div>
+            <div id="topMatched" class="metric-value">-</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div id="topVerdictBadge" class="alert" style="display: inline-block; margin-bottom: 1rem;">
+            <span id="topVerdict"></span>
+        </div>
+        <p id="topSummary" style="color: var(--text-secondary); line-height: 1.7;"></p>
+    </div>
+</div>
+
+<div id="errorContainer" class="alert warning hidden">
+    <span style="font-size: 1.2rem;">!</span>
+    <span>Please fill Job Description and ALL candidate names + CVs</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let chart = null;
+
+function generateCandidateForms(count) {
+    const container = document.getElementById('candidatesContainer');
+    container.innerHTML = '';
+    
+    for (let i = 0; i < count; i++) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.marginBottom = '1rem';
+        card.innerHTML = `
+            <div class="form-group">
+                <label class="form-label">Candidate ${i + 1} Name</label>
+                <input type="text" id="name_${i}" class="form-input" placeholder="Enter candidate name">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Candidate ${i + 1} CV</label>
+                <textarea id="cv_${i}" class="form-textarea" placeholder="Paste candidate CV here..." style="height: 150px;"></textarea>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+}
+
+document.getElementById('numCandidates').addEventListener('change', function() {
+    generateCandidateForms(parseInt(this.value));
+});
+
+generateCandidateForms(3);
+
+document.getElementById('compareBtn').addEventListener('click', async function() {
+    const jobDesc = document.getElementById('jobDescription').value.trim();
+    const numCandidates = parseInt(document.getElementById('numCandidates').value);
+    
+    const candidates = [];
+    for (let i = 0; i < numCandidates; i++) {
+        const name = document.getElementById(`name_${i}`).value.trim();
+        const cv = document.getElementById(`cv_${i}`).value.trim();
+        candidates.push({ name, cv });
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    const errorContainer = document.getElementById('errorContainer');
+    const spinner = document.getElementById('loadingSpinner');
+    
+    errorContainer.classList.add('hidden');
+    resultsContainer.classList.add('hidden');
+    
+    if (!jobDesc || !candidates.every(c => c.name && c.cv)) {
+        errorContainer.classList.remove('hidden');
+        return;
+    }
+    
+    spinner.style.display = 'block';
+    
+    try {
+        const response = await fetch('/api/compare-candidates', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_description: jobDesc, candidates: candidates })
+        });
+        
+        const data = await response.json();
+        
+        const tbody = document.getElementById('rankingsBody');
+        tbody.innerHTML = '';
+        
+        data.results.forEach((r, i) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${r.name}</td>
+                <td style="color: ${r.score_color}; font-weight: 600;">${r.score}%</td>
+                <td>${r.matched}</td>
+                <td>${r.missing}</td>
+                <td><span class="skill-badge ${r.score >= 70 ? 'matched' : r.score >= 40 ? '' : 'missing'}" style="padding: 0.3rem 0.6rem;">${r.verdict}</span></td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        if (chart) chart.destroy();
+        
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.results.map(r => r.name),
+                datasets: [{
+                    label: 'Match Score (%)',
+                    data: data.results.map(r => r.score),
+                    backgroundColor: data.results.map(r => r.score_color),
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: '#30363D' },
+                        ticks: { color: '#8B949E' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#FFFFFF' }
+                    }
+                }
+            }
+        });
+        
+        const top = data.results[0];
+        document.getElementById('topName').textContent = top.name;
+        document.getElementById('topScore').textContent = top.score + '%';
+        document.getElementById('topScore').style.color = top.score_color;
+        document.getElementById('topMatched').textContent = top.matched;
+        document.getElementById('topVerdict').textContent = top.verdict;
+        document.getElementById('topVerdictBadge').className = 'alert ' + (top.score >= 70 ? 'success' : top.score >= 40 ? 'warning' : 'error');
+        document.getElementById('topSummary').innerHTML = `<strong style="color: #FFFFFF;">${top.name}</strong> is the top candidate with a match score of <strong style="color: ${top.score_color};">${top.score}%</strong> — ${top.matched} skills matched and ${top.missing} skills missing.`;
+        
+        resultsContainer.classList.remove('hidden');
+    } catch (error) {
+        console.error('Error:', error);
+        errorContainer.querySelector('span:last-child').textContent = 'An error occurred. Please try again.';
+        errorContainer.classList.remove('hidden');
+    } finally {
+        spinner.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

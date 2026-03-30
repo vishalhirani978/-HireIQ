@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}HireIQ - Interview Questions{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-wrapper">
+        <div class="page-icon">●</div>
+        <div>
+            <h1 class="page-title">Interview Questions Generator</h1>
+            <p class="page-subtitle">Generate smart interview questions based on job requirements and candidate gaps</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon secondary">◆</div>
+            <div>
+                <h3 class="card-title">Job Description</h3>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <textarea 
+                id="jobDescription" 
+                class="form-textarea" 
+                placeholder="e.g. We need a Python developer with ML experience..."
+                style="height: 250px;"
+            ></textarea>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon secondary">○</div>
+            <div>
+                <h3 class="card-title">Candidate CV</h3>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <textarea 
+                id="candidateCV" 
+                class="form-textarea" 
+                placeholder="e.g. Ahmed Khan, Python developer, 2 years experience..."
+                style="height: 250px;"
+            ></textarea>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<div class="grid-2" style="max-width: 600px; margin: 0 auto;">
+    <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Question Difficulty</label>
+        <select id="difficulty" class="form-select">
+            <option value="Easy">Easy</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+    </div>
+    <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Number of Questions</label>
+        <select id="numQuestions" class="form-select">
+            <option value="3">3 Questions</option>
+            <option value="5" selected>5 Questions</option>
+            <option value="7">7 Questions</option>
+            <option value="10">10 Questions</option>
+        </select>
+    </div>
+</div>
+
+<div style="text-align: center; margin: 2rem 0;">
+    <button id="generateBtn" class="btn btn-primary btn-full" style="max-width: 400px;">
+        Generate Interview Questions
+    </button>
+</div>
+
+<div id="loadingSpinner" class="spinner"></div>
+
+<div id="resultsContainer" class="hidden">
+    <hr class="divider">
+
+    <div class="page-header">
+        <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem;">Generated Questions</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Total: <span id="totalQuestions">0</span> questions | Difficulty: <span id="difficultyLabel">Medium</span></p>
+    </div>
+
+    <div id="gapQuestions" class="hidden">
+        <div class="question-section gap">
+            <div class="question-header">
+                <span style="color: var(--error); font-size: 1.2rem;">●</span>
+                <h3 class="question-title">Skill Gap Questions</h3>
+                <span id="gapCount" class="question-count gap">0</span>
+            </div>
+            <div id="gapQuestionsList"></div>
+        </div>
+    </div>
+
+    <div id="verifyQuestions" class="hidden">
+        <div class="question-section verify">
+            <div class="question-header">
+                <span style="color: var(--accent); font-size: 1.2rem;">●</span>
+                <h3 class="question-title">Skill Verification Questions</h3>
+                <span id="verifyCount" class="question-count verify">0</span>
+            </div>
+            <div id="verifyQuestionsList"></div>
+        </div>
+    </div>
+
+    <div id="difficultyQuestions" class="hidden">
+        <div class="question-section difficulty">
+            <div class="question-header">
+                <span id="difficultyIcon" style="font-size: 1.2rem;">●</span>
+                <h3 id="difficultyTitle" class="question-title">Medium Level Questions</h3>
+                <span id="difficultyCount" class="question-count difficulty">0</span>
+            </div>
+            <div id="difficultyQuestionsList"></div>
+        </div>
+    </div>
+</div>
+
+<div id="errorContainer" class="alert warning hidden">
+    <span style="font-size: 1.2rem;">!</span>
+    <span>Please paste both Job Description and CV</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('generateBtn').addEventListener('click', async function() {
+    const jd = document.getElementById('jobDescription').value.trim();
+    const cv = document.getElementById('candidateCV').value.trim();
+    const difficulty = document.getElementById('difficulty').value;
+    const numQuestions = parseInt(document.getElementById('numQuestions').value);
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    const errorContainer = document.getElementById('errorContainer');
+    const spinner = document.getElementById('loadingSpinner');
+    
+    errorContainer.classList.add('hidden');
+    resultsContainer.classList.add('hidden');
+    
+    if (!jd || !cv) {
+        errorContainer.classList.remove('hidden');
+        return;
+    }
+    
+    spinner.style.display = 'block';
+    
+    try {
+        const response = await fetch('/api/generate-questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                job_description: jd, 
+                cv: cv,
+                difficulty: difficulty,
+                num_questions: numQuestions
+            })
+        });
+        
+        const data = await response.json();
+        
+        document.getElementById('totalQuestions').textContent = data.total;
+        document.getElementById('difficultyLabel').textContent = difficulty;
+        
+        const difficultyColors = { Easy: '#00D4AA', Medium: '#FFA500', Hard: '#FF4B4B' };
+        const difficultyColor = difficultyColors[difficulty];
+        
+        if (data.gap_questions && data.gap_questions.length > 0) {
+            document.getElementById('gapCount').textContent = data.gap_questions.length;
+            const gapList = document.getElementById('gapQuestionsList');
+            gapList.innerHTML = '';
+            data.gap_questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `<span style="color: var(--error); font-weight: 600; margin-right: 0.5rem;">Q${i + 1}.</span><span style="color: #E6EDF3;">${q}</span>`;
+                gapList.appendChild(card);
+            });
+            document.getElementById('gapQuestions').classList.remove('hidden');
+        }
+        
+        if (data.verify_questions && data.verify_questions.length > 0) {
+            document.getElementById('verifyCount').textContent = data.verify_questions.length;
+            const verifyList = document.getElementById('verifyQuestionsList');
+            verifyList.innerHTML = '';
+            data.verify_questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `<span style="color: var(--accent); font-weight: 600; margin-right: 0.5rem;">Q${i + 1}.</span><span style="color: #E6EDF3;">${q}</span>`;
+                verifyList.appendChild(card);
+            });
+            document.getElementById('verifyQuestions').classList.remove('hidden');
+        }
+        
+        if (data.difficulty_questions && data.difficulty_questions.length > 0) {
+            document.getElementById('difficultyIcon').style.color = difficultyColor;
+            document.getElementById('difficultyTitle').textContent = `${difficulty} Level Questions`;
+            document.getElementById('difficultyCount').textContent = data.difficulty_questions.length;
+            document.getElementById('difficultyCount').style.color = difficultyColor;
+            const diffList = document.getElementById('difficultyQuestionsList');
+            diffList.innerHTML = '';
+            data.difficulty_questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `<span style="color: ${difficultyColor}; font-weight: 600; margin-right: 0.5rem;">Q${i + 1}.</span><span style="color: #E6EDF3;">${q}</span>`;
+                diffList.appendChild(card);
+            });
+            document.getElementById('difficultyQuestions').classList.remove('hidden');
+        }
+        
+        resultsContainer.classList.remove('hidden');
+    } catch (error) {
+        console.error('Error:', error);
+        errorContainer.querySelector('span:last-child').textContent = 'An error occurred. Please try again.';
+        errorContainer.classList.remove('hidden');
+    } finally {
+        spinner.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

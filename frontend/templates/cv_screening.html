@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}HireIQ - CV Screening{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-wrapper">
+        <div class="page-icon">◆</div>
+        <div>
+            <h1 class="page-title">CV Screening</h1>
+            <p class="page-subtitle">Analyze candidate qualifications against job requirements</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon secondary">◆</div>
+            <div>
+                <h3 class="card-title">Job Description</h3>
+                <p class="card-subtitle">Enter the role requirements</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <textarea 
+                id="jobDescription" 
+                class="form-textarea" 
+                placeholder="e.g. We need a Python developer with 2 years experience in ML..."
+                style="height: 320px;"
+            ></textarea>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon primary">○</div>
+            <div>
+                <h3 class="card-title">Candidate CV</h3>
+                <p class="card-subtitle">Enter the candidate's resume</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <textarea 
+                id="candidateCV" 
+                class="form-textarea" 
+                placeholder="e.g. John Doe, 3 years Python experience, worked on ML projects..."
+                style="height: 320px;"
+            ></textarea>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin: 2rem 0;">
+    <button id="analyzeBtn" class="btn btn-primary btn-full" style="max-width: 400px;">
+        Analyze Candidate
+    </button>
+</div>
+
+<div id="loadingSpinner" class="spinner"></div>
+
+<div id="resultsContainer" class="hidden">
+    <hr class="divider">
+
+    <div class="page-header">
+        <div class="page-header-wrapper">
+            <div class="card-icon primary">◆</div>
+            <div>
+                <h2 class="page-title">Screening Results</h2>
+                <p class="page-subtitle">AI-powered candidate analysis</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scoreCard" class="score-card">
+        <div class="score-glow"></div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Match Score</p>
+        <h1 id="scoreValue" class="score-value">0%</h1>
+        <div id="scoreLabel" class="score-label"></div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-header">
+            <span class="progress-label">Score Progress</span>
+            <span id="progressValue" class="progress-value" style="color: var(--accent);">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <div class="card" style="margin: 2rem 0;">
+        <div class="card-header">
+            <div class="card-icon secondary">◆</div>
+            <div>
+                <h3 class="card-title">Hiring Recommendation</h3>
+            </div>
+        </div>
+        <div id="recommendationText" style="color: var(--text-secondary); line-height: 1.7;"></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <span style="color: var(--accent); font-size: 1.2rem;">●</span>
+                <h4 class="card-title">Matched Skills</h4>
+            </div>
+            <div id="matchedSkills" class="skills-container"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span style="color: var(--error); font-size: 1.2rem;">●</span>
+                <h4 class="card-title">Missing Skills</h4>
+            </div>
+            <div id="missingSkills" class="skills-container"></div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <div class="card-icon secondary" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); width: 44px; height: 44px;">
+                <span style="color: white; font-weight: 700; font-size: 0.9rem;">AI</span>
+            </div>
+            <div>
+                <h3 class="card-title">AI Analysis</h3>
+                <p class="card-subtitle">Detailed assessment</p>
+            </div>
+        </div>
+        <div id="aiAnalysis" style="color: var(--text-secondary); line-height: 1.75;"></div>
+    </div>
+</div>
+
+<div id="errorContainer" class="alert warning hidden">
+    <span style="font-size: 1.2rem;">!</span>
+    <span>Please paste both Job Description and CV to analyze.</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('analyzeBtn').addEventListener('click', async function() {
+    const jobDesc = document.getElementById('jobDescription').value.trim();
+    const cvText = document.getElementById('candidateCV').value.trim();
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    const errorContainer = document.getElementById('errorContainer');
+    const spinner = document.getElementById('loadingSpinner');
+    
+    errorContainer.classList.add('hidden');
+    resultsContainer.classList.add('hidden');
+    
+    if (!jobDesc || !cvText) {
+        errorContainer.classList.remove('hidden');
+        return;
+    }
+    
+    spinner.style.display = 'block';
+    
+    try {
+        const response = await fetch('/api/analyze-cv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_description: jobDesc, cv: cvText })
+        });
+        
+        const data = await response.json();
+        
+        document.getElementById('scoreValue').textContent = data.percentage + '%';
+        document.getElementById('scoreValue').className = 'score-value ' + data.score_class;
+        document.getElementById('scoreLabel').textContent = data.score_label;
+        document.getElementById('scoreLabel').className = 'score-label ' + data.score_class;
+        document.getElementById('scoreCard').className = 'score-card ' + data.score_class;
+        document.getElementById('progressValue').textContent = data.percentage + '%';
+        document.getElementById('progressValue').style.color = data.score_color;
+        document.getElementById('progressFill').style.width = data.percentage + '%';
+        document.getElementById('progressFill').className = 'progress-fill ' + data.score_class;
+        document.getElementById('recommendationText').textContent = data.recommendation;
+        document.getElementById('aiAnalysis').textContent = data.ai_analysis;
+        
+        const matchedSkillsContainer = document.getElementById('matchedSkills');
+        matchedSkillsContainer.innerHTML = '';
+        if (data.matched_skills.length > 0) {
+            data.matched_skills.forEach(skill => {
+                const badge = document.createElement('span');
+                badge.className = 'skill-badge matched';
+                badge.textContent = skill;
+                matchedSkillsContainer.appendChild(badge);
+            });
+        } else {
+            matchedSkillsContainer.innerHTML = '<p style="color: var(--text-secondary);">No matched skills found.</p>';
+        }
+        
+        const missingSkillsContainer = document.getElementById('missingSkills');
+        missingSkillsContainer.innerHTML = '';
+        if (data.missing_skills.length > 0) {
+            data.missing_skills.forEach(skill => {
+                const badge = document.createElement('span');
+                badge.className = 'skill-badge missing';
+                badge.textContent = skill;
+                missingSkillsContainer.appendChild(badge);
+            });
+        } else {
+            missingSkillsContainer.innerHTML = '<div class="alert success"><span>No missing skills — great candidate!</span></div>';
+        }
+        
+        resultsContainer.classList.remove('hidden');
+    } catch (error) {
+        console.error('Error:', error);
+        errorContainer.querySelector('span:last-child').textContent = 'An error occurred. Please try again.';
+        errorContainer.classList.remove('hidden');
+    } finally {
+        spinner.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

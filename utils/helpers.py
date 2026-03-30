@@ -38,7 +38,7 @@ def get_recommendation(percentage, matched_skills, missing_skills):
 
     if percentage >= 70:
         return f"""
-**✅ STRONG HIRE — {percentage}% Match**
+**[STRONG HIRE] — {percentage}% Match**
 
 This candidate is an excellent fit for the role!
 
@@ -51,7 +51,7 @@ This candidate is an excellent fit for the role!
         """
     elif percentage >= 40:
         return f"""
-**⚠️ MAYBE — {percentage}% Match**
+**[MAYBE] — {percentage}% Match**
 
 This candidate partially meets the requirements.
 
@@ -67,7 +67,7 @@ This candidate partially meets the requirements.
         """
     else:
         return f"""
-**❌ REJECT — {percentage}% Match**
+**[REJECT] — {percentage}% Match**
 
 This candidate does not meet the minimum requirements.
 

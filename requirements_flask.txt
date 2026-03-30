@@ -1,0 +1,4 @@
+flask>=2.0.0
+scikit-learn>=1.0.0
+huggingface-hub>=0.16.0
+python-dotenv>=1.0.0
