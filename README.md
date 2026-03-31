@@ -1,4 +1,5 @@
-# HireIQ - AI-Powered Hiring Assistant
+# HireIQ — AI-Powered Hiring Assistant
+### Screen CVs in seconds. Hire without bias. Built for Pakistan.
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python">
@@ -7,47 +8,89 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
   <img src="https://img.shields.io/badge/HuggingFace-Inference-FFD21E.svg" alt="HuggingFace">
   <img src="https://img.shields.io/badge/Built%20For-Pakistan-009900.svg" alt="Pakistan">
+  <img src="https://img.shields.io/badge/Hackathon-AI%20%26%20Big%20Data%20Expo%202026-purple.svg" alt="Hackathon">
 </p>
 
-> **HireIQ** is a free AI-powered hiring assistant built for Pakistani 
-> startups and SMEs — making CV screening faster, fairer and smarter.
+> **HireIQ** is a free AI-powered hiring assistant built specifically 
+> for Pakistani startups and SMEs — making CV screening faster, 
+> fairer and smarter.
 
 ---
 
-## The Problem We Solve
+## The Problem
 
-Hiring is a major challenge for startups and SMEs in Pakistan:
+Every Pakistani startup and SME faces the same hiring nightmare:
 
-- Hours wasted screening CVs manually
-- Unconscious bias in job descriptions and decisions
-- No standardized scoring system — subjective and inconsistent
-- Expensive recruitment agencies draining limited budgets
+| Problem | Reality |
+|---|---|
+| Manual CV screening | Hours wasted reading irrelevant CVs |
+| Unconscious bias | Good candidates rejected unfairly |
+| No scoring system | Subjective, inconsistent decisions |
+| Expensive agencies | Budgets drained on recruitment fees |
 
-**HireIQ** addresses this with AI-powered analysis that is fast, 
-fair and actionable.
+**HireIQ solves all of this — for free.**
+
+---
+
+## Demo
+
+> Screenshots of the application in action
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### CV Screening
+![CV Screening](screenshots/cv_screening.png)
+
+### Candidate Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Bias Detector
+![Bias Detector](screenshots/bias_detector.png)
 
 ---
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| CV Screening | Match a CV against a job description — get skill analysis and a clear verdict |
-| Candidate Dashboard | Compare up to 5 candidates side by side with visual charts |
-| Interview Questions | Auto-generate questions based on skill gaps and difficulty level |
-| Bias Detector | Detect 5 types of bias in job descriptions with improvement suggestions |
+### CV Screening
+- Paste any CV and job description
+- AI calculates match score using TF-IDF algorithm
+- Identifies exactly which skills match and which are missing
+- Gives clear **Hire / Maybe / Reject** verdict
+- Full AI-powered explanation of the decision
+
+### Candidate Dashboard
+- Compare up to 5 candidates simultaneously
+- Visual bar chart with color-coded results
+- Automatic ranking by match score
+- Instant top candidate recommendation
+
+### Interview Questions Generator
+- Questions auto-generated from candidate skill gaps
+- 3 difficulty levels: Easy, Medium, Hard
+- Skill verification and behavioral questions included
+- Customizable question count
+
+### Bias Detector
+- Scans job descriptions for 5 types of bias:
+  - Age Bias
+  - Gender Bias
+  - Origin Bias
+  - Appearance Bias
+  - Exclusionary Language
+- Calculates fairness score
+- Provides specific improvement suggestions
 
 ---
 
 ## How It Works
 ```
-┌─────────────────┐     ┌──────────────────────┐     ┌─────────────────┐
-│   1. INPUT      │     │   2. AI ENGINE        │     │   3. RESULTS    │
-│                 │     │                        │     │                 │
-│  Job Desc + CV  │ ──► │  TF-IDF Scoring       │ ──► │  Score + Report │
-│                 │     │  + Skill Extraction    │     │                 │
-│                 │     │  + HuggingFace AI      │     │                 │
-└─────────────────┘     └──────────────────────┘     └─────────────────┘
+Step 1          Step 2                    Step 3
+────────        ──────────────────        ──────────────────
+Paste your  →   HireIQ analyzes      →   Get instant results
+Job Desc        skills, scores            Hire / Maybe / Reject
+and CV          the match and             with full explanation
+                detects bias
 ```
 
 ---
@@ -58,36 +101,38 @@ fair and actionable.
 | Technology | Purpose |
 |---|---|
 | React 18 | UI Framework |
-| React Router | Navigation |
-| Axios | API calls |
-| Recharts | Data visualization |
-| Custom CSS | Dark theme styling |
+| React Router | Page navigation |
+| Axios | API communication |
+| Recharts | Interactive charts |
+| Custom CSS | Dark professional theme |
 
 ### Backend
 | Technology | Purpose |
 |---|---|
-| FastAPI | REST API framework |
+| FastAPI | High-performance REST API |
 | Python 3.11 | Core language |
-| Hugging Face API | AI text summarization |
-| Scikit-learn | TF-IDF scoring |
-| Pandas | Data handling |
-| python-dotenv | Environment variables |
+| Hugging Face API | AI text analysis (BART model) |
+| Scikit-learn | TF-IDF + cosine similarity scoring |
+| Pandas | Data manipulation |
+| python-dotenv | Secure environment variables |
 
 ### Architecture
 ```
 ┌──────────────────────────────────────────────────────┐
 │                    FRONTEND                           │
 │         React 18 + Recharts + Custom CSS             │
+│              http://localhost:3000                   │
 └────────────────────────┬─────────────────────────────┘
-                         │ HTTP/REST
+                         │ HTTP/REST (Axios)
 ┌────────────────────────▼─────────────────────────────┐
 │                    BACKEND                            │
-│         FastAPI + Python 3.11                        │
+│              FastAPI + Python 3.11                   │
+│              http://localhost:8000                   │
 │                                                      │
-│  /api/screen-cv          CV vs Job matching          │
-│  /api/compare-candidates Multi-candidate ranking     │
-│  /api/generate-questions Interview question gen      │
-│  /api/detect-bias        Bias analysis               │
+│  POST /api/screen-cv          → CV matching          │
+│  POST /api/compare-candidates → Candidate ranking    │
+│  POST /api/generate-questions → Question generation  │
+│  POST /api/detect-bias        → Bias analysis        │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -100,60 +145,51 @@ fair and actionable.
 - Node.js 18+
 - HuggingFace API Token (free)
 
-### 1. Clone the Repository
+### Option 1 — One Click Start (Windows)
 ```bash
 git clone https://github.com/vishalhirani978/-HireIQ
 cd HireIQ
+run.bat
 ```
+This starts both backend and frontend automatically!
 
-### 2. Backend Setup
+### Option 2 — Manual Setup
+
+**Backend:**
 ```bash
 cd backend
 pip install -r requirements.txt
-```
-
-### 3. Create .env file
-```
-HUGGINGFACE_TOKEN=your_token_here
-```
-Get your free token at: https://huggingface.co/settings/tokens
-
-### 4. Start Backend
-```bash
 uvicorn main:app --reload --port 8000
 ```
-API docs available at: http://localhost:8000/docs
 
-### 5. Frontend Setup
+**Frontend:**
 ```bash
 cd frontend
 npm install
 npm start
 ```
-App runs at: http://localhost:3000
 
-### 6. Or Run Everything Together (Windows)
-```bash
-run.bat
+**Environment Variables:**
+
+Create `.env` in root directory:
 ```
+HUGGINGFACE_TOKEN=your_token_here
+```
+Get your free token: https://huggingface.co/settings/tokens
 
 ---
 
-## API Endpoints
+## API Reference
 
-### CV Screening
-```http
-POST /api/screen-cv
-Content-Type: application/json
-
-{
-  "job_desc": "We need a Python developer with ML experience...",
-  "cv_text": "Python developer with 3 years experience in ML..."
-}
-```
-
-**Response:**
+### POST /api/screen-cv
 ```json
+Request:
+{
+  "job_desc": "Python developer with ML experience...",
+  "cv_text": "Ahmed Khan, Python developer, 3 years..."
+}
+
+Response:
 {
   "percentage": 65.4,
   "matched_skills": ["Python", "Machine Learning", "Pandas"],
@@ -163,11 +199,9 @@ Content-Type: application/json
 }
 ```
 
-### Compare Candidates
-```http
-POST /api/compare-candidates
-Content-Type: application/json
-
+### POST /api/compare-candidates
+```json
+Request:
 {
   "job_desc": "Senior Python Developer...",
   "candidates": [
@@ -177,11 +211,9 @@ Content-Type: application/json
 }
 ```
 
-### Generate Interview Questions
-```http
-POST /api/generate-questions
-Content-Type: application/json
-
+### POST /api/generate-questions
+```json
+Request:
 {
   "job_desc": "Python Developer role...",
   "cv_text": "Ahmed Khan CV...",
@@ -190,13 +222,21 @@ Content-Type: application/json
 }
 ```
 
-### Detect Bias
-```http
-POST /api/detect-bias
-Content-Type: application/json
-
+### POST /api/detect-bias
+```json
+Request:
 {
   "job_desc": "Looking for young energetic developer..."
+}
+
+Response:
+{
+  "fairness_score": 0,
+  "biased_count": 5,
+  "found_biases": {
+    "Age Bias": ["young", "energetic", "under 30"],
+    "Gender Bias": ["he must"]
+  }
 }
 ```
 
@@ -206,37 +246,37 @@ Content-Type: application/json
 ```
 HireIQ/
 ├── backend/
-│   ├── main.py              # FastAPI entry point
-│   ├── routers/             # API route handlers
+│   ├── main.py                  # FastAPI entry point
+│   ├── routers/                 # API route handlers
 │   │   ├── cv_screening.py
 │   │   ├── dashboard.py
 │   │   ├── interview.py
 │   │   └── bias_detector.py
-│   ├── services/            # Business logic
-│   │   ├── scorer.py
-│   │   ├── bias_checker.py
-│   │   └── question_gen.py
-│   ├── models/              # Pydantic schemas
+│   ├── services/                # Core business logic
+│   │   ├── scorer.py            # TF-IDF scoring
+│   │   ├── bias_checker.py      # Bias detection
+│   │   └── question_gen.py      # Question generation
+│   ├── models/                  # Pydantic schemas
 │   └── requirements.txt
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Page components
+│   │   ├── components/          # Reusable UI components
+│   │   ├── pages/               # Page components
 │   │   │   ├── Home.jsx
 │   │   │   ├── CVScreening.jsx
 │   │   │   ├── Dashboard.jsx
 │   │   │   ├── InterviewQuestions.jsx
 │   │   │   └── BiasDetector.jsx
-│   │   ├── services/        # API service calls
-│   │   └── styles/          # CSS files
+│   │   ├── services/            # API calls
+│   │   └── styles/              # CSS files
 │   └── package.json
 │
-├── components/              # Streamlit version
-├── utils/                   # Shared utilities
-├── app.py                   # Streamlit entry point
-├── run.bat                  # Windows startup script
-└── .env                     # API keys (not committed)
+├── components/                  # Streamlit version (legacy)
+├── utils/                       # Shared utilities
+├── app.py                       # Streamlit entry point
+├── run.bat                      # One-click Windows starter
+└── .env                         # API keys (never committed)
 ```
 
 ---
@@ -247,22 +287,25 @@ HireIQ/
 |---|---|---|
 | Primary | #1E3A5F | Navigation, headers |
 | Secondary | #2E86AB | Interactive elements |
-| Accent | #00D4AA | Success states |
+| Accent | #00D4AA | Success, highlights |
 | Background | #0E1117 | Main background |
-| Warning | #FFA500 | Caution indicators |
+| Surface | #161B22 | Cards, panels |
+| Warning | #FFA500 | Caution states |
 | Error | #FF4B4B | Error states |
 
 ---
 
-## Why HireIQ?
+## Why We Built This
 
-Pakistani SMEs face unique challenges:
-- No affordable AI hiring tools exist for the local market
-- Bias in hiring affects diverse talent from being considered
-- Manual screening is time consuming and inconsistent
+Pakistan has 3.2 million registered SMEs — most of them still 
+hire manually, subjectively and with unconscious bias.
 
-HireIQ is built specifically for this market — completely free 
-with no subscription required.
+No affordable AI hiring tool existed for this market.
+
+So we built one.
+
+HireIQ is completely free, requires no subscription and is 
+built specifically for Pakistani businesses.
 
 ---
 
@@ -276,16 +319,16 @@ Theme: Transforming Enterprise Through AI
 
 ## Acknowledgments
 
-- HuggingFace for providing free AI inference API
-- Scikit-learn for machine learning utilities
-- FastAPI for the excellent Python web framework
+- HuggingFace for the free inference API
+- Scikit-learn for ML utilities
+- FastAPI for the excellent web framework
 - React team for the modern UI library
 
 ---
 
 ## License
 
-MIT License — Free to use and modify
+MIT License — Free to use, modify and distribute
 
 ---
 
@@ -293,24 +336,6 @@ MIT License — Free to use and modify
   <strong>Built with passion for Pakistani Businesses</strong>
   <br>
   <sub>Powered by AI and Hugging Face</sub>
+  <br><br>
+  <sub>AI & Big Data Expo Hackathon 2026 — Transforming Enterprise Through AI</sub>
 </p>
-```
-
----
-
-## Key Changes I Made:
-
-| Removed | Why |
-|---|---|
-| "80% time saved" | Fake metric |
-| "95% accuracy" | Unproven claim |
-| "Why HireIQ Wins" | Arrogant |
-| Contributing guide | Unnecessary for hackathon |
-
-| Added | Why |
-|---|---|
-| Pakistan badge | Shows local focus |
-| Honest API response | Matches real output |
-| Streamlit mention | Honest about both versions |
-| Realistic claims | Judges will respect honesty |
-
