@@ -1,5 +1,4 @@
-# HireIQ — AI-Powered Hiring Assistant
-### Screen CVs in seconds. Hire without bias. Built for Pakistan.
+# HireIQ - AI-Powered Hiring Assistant
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python">
@@ -11,8 +10,8 @@
   <img src="https://img.shields.io/badge/Hackathon-AI%20%26%20Big%20Data%20Expo%202026-purple.svg" alt="Hackathon">
 </p>
 
-> **HireIQ** is a free AI-powered hiring assistant built specifically 
-> for Pakistani startups and SMEs — making CV screening faster, 
+> **HireIQ** is a free AI-powered hiring assistant built specifically
+> for Pakistani startups and SMEs — making CV screening faster,
 > fairer and smarter.
 
 ---
@@ -23,7 +22,7 @@ Every Pakistani startup and SME faces the same hiring nightmare:
 
 | Problem | Reality |
 |---|---|
-| Manual CV screening | Hours wasted reading irrelevant CVs |
+| Manual CV screening | Hours wasted on each position |
 | Unconscious bias | Good candidates rejected unfairly |
 | No scoring system | Subjective, inconsistent decisions |
 | Expensive agencies | Budgets drained on recruitment fees |
@@ -84,13 +83,16 @@ Every Pakistani startup and SME faces the same hiring nightmare:
 ---
 
 ## How It Works
+
 ```
-Step 1          Step 2                    Step 3
-────────        ──────────────────        ──────────────────
-Paste your  →   HireIQ analyzes      →   Get instant results
-Job Desc        skills, scores            Hire / Maybe / Reject
-and CV          the match and             with full explanation
-                detects bias
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  Step 1          Step 2                    Step 3                          │
+│  ────────        ──────────────────        ──────────────────              │
+│  Paste your  →   HireIQ analyzes      →   Get instant results              │
+│  Job Desc        skills, scores            Hire / Maybe / Reject           │
+│  and CV          the match and             with full explanation           │
+│                  detects bias                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -98,15 +100,17 @@ and CV          the match and             with full explanation
 ## Tech Stack
 
 ### Frontend
+
 | Technology | Purpose |
 |---|---|
 | React 18 | UI Framework |
 | React Router | Page navigation |
-| Axios | API communication |
+| Axios | API calls |
 | Recharts | Interactive charts |
 | Custom CSS | Dark professional theme |
 
 ### Backend
+
 | Technology | Purpose |
 |---|---|
 | FastAPI | High-performance REST API |
@@ -117,6 +121,7 @@ and CV          the match and             with full explanation
 | python-dotenv | Secure environment variables |
 
 ### Architecture
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │                    FRONTEND                           │
@@ -126,7 +131,6 @@ and CV          the match and             with full explanation
                          │ HTTP/REST (Axios)
 ┌────────────────────────▼─────────────────────────────┐
 │                    BACKEND                            │
-│              FastAPI + Python 3.11                   │
 │              http://localhost:8000                   │
 │                                                      │
 │  POST /api/screen-cv          → CV matching          │
@@ -146,11 +150,13 @@ and CV          the match and             with full explanation
 - HuggingFace API Token (free)
 
 ### Option 1 — One Click Start (Windows)
+
 ```bash
 git clone https://github.com/vishalhirani978/-HireIQ
 cd HireIQ
 run.bat
 ```
+
 This starts both backend and frontend automatically!
 
 ### Option 2 — Manual Setup
@@ -175,6 +181,7 @@ Create `.env` in root directory:
 ```
 HUGGINGFACE_TOKEN=your_token_here
 ```
+
 Get your free token: https://huggingface.co/settings/tokens
 
 ---
@@ -182,6 +189,7 @@ Get your free token: https://huggingface.co/settings/tokens
 ## API Reference
 
 ### POST /api/screen-cv
+
 ```json
 Request:
 {
@@ -200,6 +208,7 @@ Response:
 ```
 
 ### POST /api/compare-candidates
+
 ```json
 Request:
 {
@@ -212,6 +221,7 @@ Request:
 ```
 
 ### POST /api/generate-questions
+
 ```json
 Request:
 {
@@ -223,6 +233,7 @@ Request:
 ```
 
 ### POST /api/detect-bias
+
 ```json
 Request:
 {
@@ -243,6 +254,7 @@ Response:
 ---
 
 ## Project Structure
+
 ```
 HireIQ/
 ├── backend/
@@ -258,7 +270,6 @@ HireIQ/
 │   │   └── question_gen.py      # Question generation
 │   ├── models/                  # Pydantic schemas
 │   └── requirements.txt
-│
 ├── frontend/
 │   ├── src/
 │   │   ├── components/          # Reusable UI components
@@ -271,7 +282,6 @@ HireIQ/
 │   │   ├── services/            # API calls
 │   │   └── styles/              # CSS files
 │   └── package.json
-│
 ├── components/                  # Streamlit version (legacy)
 ├── utils/                       # Shared utilities
 ├── app.py                       # Streamlit entry point
@@ -290,22 +300,20 @@ HireIQ/
 | Accent | #00D4AA | Success, highlights |
 | Background | #0E1117 | Main background |
 | Surface | #161B22 | Cards, panels |
-| Warning | #FFA500 | Caution states |
+| Warning | #FFA500 | Caution indicators |
 | Error | #FF4B4B | Error states |
 
 ---
 
 ## Why We Built This
 
-Pakistan has 3.2 million registered SMEs — most of them still 
-hire manually, subjectively and with unconscious bias.
+Pakistan has 3.2 million registered SMEs — most of them still hire manually, subjectively and with unconscious bias.
 
 No affordable AI hiring tool existed for this market.
 
 So we built one.
 
-HireIQ is completely free, requires no subscription and is 
-built specifically for Pakistani businesses.
+HireIQ is completely free, requires no subscription and is built specifically for Pakistani businesses.
 
 ---
 
