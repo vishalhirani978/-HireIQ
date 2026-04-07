@@ -88,7 +88,7 @@ def show_home():
     with col1:
         st.metric("Time Saved", "80%", "vs manual screening")
     with col2:
-        st.metric("Accuracy", "95%", "skill matching")
+        st.metric("Accuracy", "HIGH", "skill matching")
     with col3:
         st.metric("Bias Checks", "5 Types", "detected automatically")
     with col4:

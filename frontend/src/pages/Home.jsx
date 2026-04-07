@@ -27,7 +27,7 @@ function Home() {
         </div>
         <div className="metric-card">
           <div className="metric-label">Accuracy</div>
-          <div className="metric-value">95%</div>
+          <div className="metric-value">HIGH</div>
           <div className="metric-delta">skill matching</div>
         </div>
         <div className="metric-card">
