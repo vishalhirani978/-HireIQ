@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { compareCandidates } from '../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-function Dashboard() {
+export default function Dashboard() {
   const [jobDesc, setJobDesc] = useState('');
   const [numCandidates, setNumCandidates] = useState(3);
   const [candidates, setCandidates] = useState(
@@ -102,10 +102,6 @@ function Dashboard() {
 
       <hr className="divider" />
 
-      <div className="page-header">
-        <h3 style={{ fontWeight: 600 }}>Candidate Information</h3>
-      </div>
-
       {candidates.map((candidate, idx) => (
         <div key={idx} className="card" style={{ marginBottom: '1rem' }}>
           <h4 style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
@@ -122,7 +118,7 @@ function Dashboard() {
                 onChange={(e) => handleCandidateChange(idx, 'name', e.target.value)}
               />
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
+            <div className="form-group">
               <label className="form-label">CV</label>
               <textarea
                 className="form-textarea"
@@ -159,17 +155,8 @@ function Dashboard() {
           <hr className="divider" />
 
           <div className="page-header">
-            <div className="page-header-wrapper">
-              <div className="card-icon primary">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-              <div>
-                <h2 className="page-title">Candidate Rankings</h2>
-                <p className="page-subtitle">Sorted by match score</p>
-              </div>
-            </div>
+            <h2 className="page-title">Candidate Rankings</h2>
+            <p className="page-subtitle">Sorted by match score</p>
           </div>
 
           <table className="data-table">
@@ -192,10 +179,7 @@ function Dashboard() {
                   <td>{result.matched}</td>
                   <td>{result.missing}</td>
                   <td>
-                    <span
-                      className={`skill-badge ${result.score >= 70 ? 'matched' : result.score >= 40 ? '' : 'missing'}`}
-                      style={{ padding: '0.3rem 0.6rem' }}
-                    >
+                    <span className={`skill-badge ${result.score >= 70 ? 'matched' : 'missing'}`}>
                       {result.verdict}
                     </span>
                   </td>
@@ -223,46 +207,15 @@ function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          <hr className="divider" />
-
-          <div className="page-header">
-            <div className="page-header-wrapper">
-              <div className="card-icon" style={{ background: 'linear-gradient(135deg, var(--warning), #FF8C00)' }}>
-                <span style={{ color: 'white' }}>&#9733;</span>
-              </div>
-              <h2 className="page-title">Top Candidate</h2>
-            </div>
-          </div>
-
-          <div className="metrics-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-            <div className="metric-card">
-              <div className="metric-label">Best Candidate</div>
-              <div className="metric-value" style={{ fontSize: '1.2rem' }}>{results.results[0].name}</div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-label">Match Score</div>
-              <div className="metric-value" style={{ color: results.results[0].score_color }}>
-                {results.results[0].score}%
-              </div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-label">Skills Matched</div>
-              <div className="metric-value">{results.results[0].matched}</div>
-            </div>
-          </div>
-
           <div className="card" style={{ marginTop: '1.5rem' }}>
-            <span
-              className={`skill-badge ${results.results[0].score >= 70 ? 'matched' : results.results[0].score >= 40 ? '' : 'missing'}`}
-              style={{ padding: '0.5rem 1rem', marginBottom: '1rem', display: 'inline-block' }}
-            >
-              {results.results[0].verdict}
-            </span>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+            <h3 style={{ marginBottom: '1rem' }}>
+              <span style={{ color: 'var(--warning)' }}>&#9733;</span> Top Candidate
+            </h3>
+            <p style={{ color: 'var(--text-secondary)' }}>
               <strong style={{ color: '#FFFFFF' }}>{results.results[0].name}</strong> is the top candidate
               with a match score of <strong style={{ color: results.results[0].score_color }}>
                 {results.results[0].score}%
-              </strong> - {results.results[0].matched} skills matched and {results.results[0].missing} skills missing.
+              </strong>
             </p>
           </div>
         </div>
@@ -270,5 +223,3 @@ function Dashboard() {
     </div>
   );
 }
-
-export default Dashboard;

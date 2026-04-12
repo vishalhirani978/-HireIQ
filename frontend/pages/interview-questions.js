@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { generateQuestions } from '../services/api';
 
-function InterviewQuestions() {
+export default function InterviewQuestions() {
   const [jobDesc, setJobDesc] = useState('');
   const [cvText, setCvText] = useState('');
   const [difficulty, setDifficulty] = useState('Medium');
@@ -103,7 +103,7 @@ function InterviewQuestions() {
       <hr className="divider" />
 
       <div className="grid-2" style={{ maxWidth: '500px', margin: '0 auto' }}>
-        <div className="form-group" style={{ marginBottom: 0 }}>
+        <div className="form-group">
           <label className="form-label">Question Difficulty</label>
           <select
             className="form-select"
@@ -115,7 +115,7 @@ function InterviewQuestions() {
             <option value="Hard">Hard</option>
           </select>
         </div>
-        <div className="form-group" style={{ marginBottom: 0 }}>
+        <div className="form-group">
           <label className="form-label">Number of Questions</label>
           <select
             className="form-select"
@@ -219,5 +219,3 @@ function InterviewQuestions() {
     </div>
   );
 }
-
-export default InterviewQuestions;
