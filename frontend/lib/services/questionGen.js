@@ -70,4 +70,4 @@ function generateQuestions(matchedSkills, missingSkills, difficulty, numQuestion
   };
 }
 
-module.exports = { generateQuestions };
+export { generateQuestions };

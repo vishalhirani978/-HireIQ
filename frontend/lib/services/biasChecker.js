@@ -94,4 +94,4 @@ function detectBias(text) {
   };
 }
 
-module.exports = { detectBias, BIAS_DICT };
+export { detectBias, BIAS_DICT };

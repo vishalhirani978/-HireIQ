@@ -141,7 +141,7 @@ async function generateAIAnalysis(jobDesc, cvText, matchedSkills, missingSkills,
   }
 }
 
-module.exports = {
+export {
   extractSkills,
   calculateScore,
   getScoreClass,
