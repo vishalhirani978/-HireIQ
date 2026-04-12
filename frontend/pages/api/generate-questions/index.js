@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { extractSkills } from '@/lib/services/scorer';
-import { generateQuestions } from '@/lib/services/questionGen';
+import { extractSkills } from '../../../lib/services/scorer';
+import { generateQuestions } from '../../../lib/services/questionGen';
 
 export async function POST(request) {
   try {

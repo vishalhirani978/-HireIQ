@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { detectBias } from '@/lib/services/biasChecker';
+import { detectBias } from '../../../lib/services/biasChecker';
 
 export async function POST(request) {
   try {

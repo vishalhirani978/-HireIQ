@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { extractSkills, calculateScore } from '@/lib/services/scorer';
+import { extractSkills, calculateScore } from '../../../lib/services/scorer';
 
 function getScoreColor(score) {
   if (score >= 70) return "#00D4AA";

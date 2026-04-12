@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { extractSkills, calculateScore, getScoreClass, generateRecommendation, generateAIAnalysis } from '@/lib/services/scorer';
+import { extractSkills, calculateScore, getScoreClass, generateRecommendation, generateAIAnalysis } from '../../../lib/services/scorer';
 
 export async function POST(request) {
   try {
