@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { extractSkills, calculateScore, getScoreClass, generateRecommendation, generateAIAnalysis } from '../../../lib/services/scorer';
+import { extractSkills, calculateScore, getScoreClass, generateRecommendation } from '../../../lib/services/scorer';
 
 export async function POST(request) {
   try {
@@ -26,15 +26,13 @@ export async function POST(request) {
     const recommendation = generateRecommendation(percentage, matchedSkills, missingSkills);
     const { class: scoreClass, label: scoreLabel, color: scoreColor } = getScoreClass(percentage);
     
-    const aiAnalysis = await generateAIAnalysis(job_desc, cv_text, matchedSkills, missingSkills, percentage, recommendation);
-    
     return NextResponse.json({
       score,
       percentage,
       matched_skills: matchedSkills,
       missing_skills: missingSkills,
       recommendation,
-      ai_analysis: aiAnalysis,
+      ai_analysis: `Analysis complete. Match score is ${percentage}%. ${recommendation}`,
       score_class: scoreClass,
       score_label: scoreLabel,
       score_color: scoreColor
