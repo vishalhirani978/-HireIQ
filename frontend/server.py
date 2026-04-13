@@ -34,8 +34,8 @@ def bias_detector():
 @app.route('/api/analyze-cv', methods=['POST'])
 def analyze_cv():
     data = request.json
-    job_desc = data.get('job_description', '')
-    cv = data.get('cv', '')
+    job_desc = data.get('job_desc', data.get('job_description', ''))
+    cv = data.get('cv_text', data.get('cv', ''))
     
     score, percentage = get_match_score(job_desc, cv)
     job_skills = extract_skills(job_desc)
@@ -84,10 +84,63 @@ def analyze_cv():
         'ai_analysis': ai_analysis
     })
 
+@app.route('/api/screen-cv', methods=['POST'])
+def screen_cv():
+    data = request.json
+    job_desc = data.get('job_desc', '')
+    cv_text = data.get('cv_text', '')
+    
+    score, percentage = get_match_score(job_desc, cv_text)
+    job_skills = extract_skills(job_desc)
+    cv_skills = extract_skills(cv_text)
+    matched_skills = [s for s in job_skills if s in cv_skills]
+    missing_skills = [s for s in job_skills if s not in cv_skills]
+    recommendation = get_recommendation(percentage, matched_skills, missing_skills)
+    
+    if percentage >= 70:
+        score_class = 'high'
+        score_label = 'Strong Match'
+        score_color = '#00D4AA'
+    elif percentage >= 40:
+        score_class = 'medium'
+        score_label = 'Partial Match'
+        score_color = '#FFA500'
+    else:
+        score_class = 'low'
+        score_label = 'Weak Match'
+        score_color = '#FF4B4B'
+    
+    analysis_text = (
+        f"Job requires: {job_desc[:300]}. "
+        f"Candidate has: {cv_text[:300]}. "
+        f"Matched skills: {', '.join(matched_skills)}. "
+        f"Missing skills: {', '.join(missing_skills)}. "
+        f"Overall match score: {percentage}%."
+    )
+    
+    try:
+        from huggingface_hub import InferenceClient
+        client = InferenceClient(token=os.getenv("HUGGINGFACE_TOKEN"))
+        ai_summary = client.summarization(analysis_text, model="facebook/bart-large-cnn")
+        ai_analysis = ai_summary.summary_text
+    except Exception as e:
+        ai_analysis = f"Analysis complete. Match score is {percentage}%. {recommendation}"
+    
+    return jsonify({
+        'percentage': percentage,
+        'score_class': score_class,
+        'score_label': score_label,
+        'score_color': score_color,
+        'matched_skills': matched_skills,
+        'missing_skills': missing_skills,
+        'recommendation': recommendation,
+        'ai_analysis': ai_analysis
+    })
+
 @app.route('/api/compare-candidates', methods=['POST'])
 def compare_candidates():
     data = request.json
-    job_desc = data.get('job_description', '')
+    job_desc = data.get('job_desc', data.get('job_description', ''))
     candidates = data.get('candidates', [])
     
     results = []
@@ -124,8 +177,8 @@ def compare_candidates():
 @app.route('/api/generate-questions', methods=['POST'])
 def api_generate_questions():
     data = request.json
-    jd = data.get('job_description', '')
-    cv = data.get('cv', '')
+    jd = data.get('job_desc', data.get('job_description', ''))
+    cv = data.get('cv_text', data.get('cv', ''))
     difficulty = data.get('difficulty', 'Medium')
     num_questions = data.get('num_questions', 5)
     
@@ -151,7 +204,7 @@ def api_generate_questions():
 @app.route('/api/detect-bias', methods=['POST'])
 def api_detect_bias():
     data = request.json
-    job_desc = data.get('job_description', '')
+    job_desc = data.get('job_desc', data.get('job_description', ''))
     
     found_biases, fairness_score, biased_count, clean_count = detect_bias(job_desc)
     
