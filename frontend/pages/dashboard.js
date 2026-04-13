@@ -37,7 +37,9 @@ export default function Dashboard() {
       const data = await compareCandidates(jobDesc, candidates);
       setResults(data);
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('Dashboard error:', err);
+      console.error('Response data:', err.response?.data);
+      setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
