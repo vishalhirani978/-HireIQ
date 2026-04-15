@@ -3,7 +3,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python">
   <img src="https://img.shields.io/badge/FastAPI-0.104-green.svg" alt="FastAPI">
-  <img src="https://img.shields.io/badge/React-18-61DAFB.svg" alt="React">
+  <img src="https://img.shields.io/badge/Next.js-14.2.0-black.svg" alt="Next.js">
+  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB.svg" alt="React">
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
   <img src="https://img.shields.io/badge/HuggingFace-Inference-FFD21E.svg" alt="HuggingFace">
   <img src="https://img.shields.io/badge/Built%20For-Pakistan-009900.svg" alt="Pakistan">
@@ -99,38 +100,41 @@ Every Pakistani startup and SME faces the same hiring nightmare:
 
 ## Tech Stack
 
-### Frontend
+### Frontend (Next.js Pages Router)
 
-| Technology | Purpose |
-|---|---|
-| React 18 | UI Framework |
-| React Router | Page navigation |
-| Axios | API calls |
-| Recharts | Interactive charts |
-| Custom CSS | Dark professional theme |
+| Technology | Version | Purpose |
+|---|---|---|
+| React | 18.3.1 | UI Framework |
+| Next.js | 14.2.0 | React Framework (pages router) |
+| Axios | 1.14.0 | HTTP Client |
+| Recharts | 2.15.4 | Interactive charts |
+| Lucide React | 0.294.0 | Icons |
+| Custom CSS | - | Dark professional theme |
 
 ### Backend
 
-| Technology | Purpose |
-|---|---|
-| FastAPI | High-performance REST API |
-| Python 3.11 | Core language |
-| Hugging Face API | AI text analysis (BART model) |
-| Scikit-learn | TF-IDF + cosine similarity scoring |
-| Pandas | Data manipulation |
-| python-dotenv | Secure environment variables |
+| Technology | Version | Purpose |
+|---|---|---|
+| FastAPI | 0.104+ | High-performance REST API |
+| Python | 3.11+ | Core language |
+| HuggingFace Hub | 0.19+ | AI text analysis |
+| Scikit-learn | 1.3+ | TF-IDF + cosine similarity scoring |
+| Pydantic | 2.5+ | Data validation |
+| Uvicorn | 0.24+ | ASGI server |
+| python-dotenv | 1.0+ | Secure environment variables |
 
 ### Architecture
 
 ```
 ┌──────────────────────────────────────────────────────┐
 │                    FRONTEND                           │
-│         React 18 + Recharts + Custom CSS             │
+│            Next.js 14 (Pages Router)                 │
 │              http://localhost:3000                   │
 └────────────────────────┬─────────────────────────────┘
                          │ HTTP/REST (Axios)
 ┌────────────────────────▼─────────────────────────────┐
 │                    BACKEND                            │
+│                    FastAPI                            │
 │              http://localhost:8000                   │
 │                                                      │
 │  POST /api/screen-cv          → CV matching          │
@@ -183,6 +187,38 @@ HUGGINGFACE_TOKEN=your_token_here
 ```
 
 Get your free token: https://huggingface.co/settings/tokens
+
+### Alternative: Streamlit Version (Legacy)
+
+```bash
+pip install streamlit pandas scikit-learn
+streamlit run app.py
+```
+
+---
+
+## How CV Screening Works
+
+HireIQ uses a sophisticated scoring algorithm:
+
+```
+Match Score = (Skills Match × 70%) + (Text Similarity × 30%)
+
+Skills Matching:
+- Extracts 50+ technical and soft skills from job description
+- Compares against candidate CV
+- Identifies matched and missing skills
+
+Text Similarity:
+- TF-IDF vectorization of job desc and CV
+- Cosine similarity calculation
+- Normalized to 0-100% scale
+
+Recommendation Thresholds:
+- 70%+ = STRONG HIRE (Green)
+- 40-69% = MAYBE (Orange)
+- <40% = REJECT (Red)
+```
 
 ---
 
@@ -251,6 +287,18 @@ Response:
 }
 ```
 
+### GET /health
+
+Health check endpoint for monitoring.
+
+```json
+Response:
+{
+  "status": "healthy",
+  "model_loaded": true
+}
+```
+
 ---
 
 ## Project Structure
@@ -260,33 +308,53 @@ HireIQ/
 ├── backend/
 │   ├── main.py                  # FastAPI entry point
 │   ├── routers/                 # API route handlers
-│   │   ├── cv_screening.py
-│   │   ├── dashboard.py
-│   │   ├── interview.py
-│   │   └── bias_detector.py
+│   │   ├── cv_screening.py      # CV screening endpoint
+│   │   ├── dashboard.py         # Candidate comparison
+│   │   ├── interview.py         # Question generation
+│   │   └── bias_detector.py     # Bias detection
 │   ├── services/                # Core business logic
 │   │   ├── scorer.py            # TF-IDF scoring
 │   │   ├── bias_checker.py      # Bias detection
 │   │   └── question_gen.py      # Question generation
 │   ├── models/                  # Pydantic schemas
+│   │   └── schemas.py           # API request/response models
 │   └── requirements.txt
 ├── frontend/
+│   ├── pages/                   # Next.js pages (pages router)
+│   │   ├── index.js             # Home page
+│   │   ├── cv-screening.js      # CV screening page
+│   │   ├── dashboard.js         # Candidate dashboard
+│   │   ├── interview-questions.js
+│   │   ├── bias-detector.js
+│   │   ├── _app.js
+│   │   └── _document.js
 │   ├── src/
 │   │   ├── components/          # Reusable UI components
-│   │   ├── pages/               # Page components
-│   │   │   ├── Home.jsx
-│   │   │   ├── CVScreening.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── InterviewQuestions.jsx
-│   │   │   └── BiasDetector.jsx
-│   │   ├── services/            # API calls
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   └── Footer.jsx
 │   │   └── styles/              # CSS files
-│   └── package.json
+│   ├── services/               # API client
+│   ├── lib/                    # Utility services
+│   ├── next.config.js
+│   ├── package.json
+│   └── DEPLOY.md               # Vercel deployment guide
 ├── components/                  # Streamlit version (legacy)
+│   ├── home.py
+│   ├── cv_screening.py
+│   ├── dashboard.py
+│   ├── interview.py
+│   └── bias_detector.py
 ├── utils/                       # Shared utilities
+│   └── helpers.py
+├── screenshots/                 # Project screenshots
 ├── app.py                       # Streamlit entry point
+├── start_server.py              # Backend launcher
+├── run_backend.py               # Backend runner script
 ├── run.bat                      # One-click Windows starter
-└── .env                         # API keys (never committed)
+├── start_all.ps1                # PowerShell launcher
+├── requirements_flask.txt       # Flask dependencies (legacy)
+└── README.md
 ```
 
 ---
@@ -334,6 +402,18 @@ Theme: Transforming Enterprise Through AI
 
 ---
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
 ## License
 
 MIT License — Free to use, modify and distribute
@@ -342,8 +422,8 @@ MIT License — Free to use, modify and distribute
 
 <p align="center">
   <strong>Built with passion for Pakistani Businesses</strong>
-  <br>
-  <sub>Powered by AI and Hugging Face</sub>
   <br><br>
+  <a href="https://huggingface.co">🤗 Powered by HuggingFace</a>
+  <br>
   <sub>AI & Big Data Expo Hackathon 2026 — Transforming Enterprise Through AI</sub>
 </p>
