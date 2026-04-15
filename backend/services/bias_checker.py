@@ -1,83 +1,73 @@
-# Bias Detection Service
-BIAS_DICT = {
+from services.scorer import extract_skills, SKILLS_LIST
+
+BIAS_PATTERNS = {
     "Age Bias": {
-        "words": [
-            "young", "energetic", "fresh graduate", "recent graduate",
-            "digital native", "old", "mature", "experienced only",
-            "years old", "age limit", "under 30", "under 25", "recently retired"
-        ],
-        "color": "#FF4B4B",
-        "suggestion": "Remove age-related language. Focus on skills and experience requirements instead of age or generation."
+        "words": ["young", "energetic", "fresh graduate", "digital native", "old", 
+                  "mature", "years old", "age limit", "under 30", "under 25",
+                  "recent graduate", "new generation"],
+        "suggestion": "Remove age-related language. Focus on skills and experience instead."
     },
     "Gender Bias": {
-        "words": [
-            "he must", "she must", "him", "her", "guys",
-            "manpower", "mankind", "man the", "salesman",
-            "businessman", "craftsman", "chairman", "freshman",
-            "workforce men", "hardworking man"
-        ],
-        "color": "#FF4B4B",
-        "suggestion": "Use gender-neutral language like 'they', 'the candidate', 'team member', 'professional'."
+        "words": ["he must", "she must", "him", "her", "guys", "manpower", 
+                  "mankind", "man the", "salesman", "businessman", "craftsman", "chairman",
+                  "waiter", "secretary"],
+        "suggestion": "Use gender-neutral language like 'they', 'the candidate', 'team member'."
     },
     "Origin Bias": {
-        "words": [
-            "native speaker", "mother tongue", "born in",
-            "local candidate", "nationals only", "citizens only",
-            "local residents", "must be from", "pakistani only",
-            "lahore based", "karachi based"
-        ],
-        "color": "#FF4B4B",
-        "suggestion": "Focus on language proficiency level and skills instead of origin or location."
+        "words": ["native speaker", "mother tongue", "born in", "local candidate",
+                  "nationals only", "citizens only", "local residents", "must be from",
+                  "from lahore", "from karachi", "from islamabad", "pakistani only"],
+        "suggestion": "Focus on language proficiency level instead of origin."
     },
     "Appearance Bias": {
-        "words": [
-            "well groomed", "presentable", "attractive",
-            "good looking", "physically fit", "slim",
-            "height", "weight", "appearance", "clean shaven"
-        ],
-        "color": "#FFA500",
-        "suggestion": "Only mention appearance if strictly necessary for the role (e.g., acting, modeling)."
+        "words": ["well groomed", "presentable", "attractive", "good looking",
+                  "physically fit", "slim", "height", "weight", "appearance",
+                  "good looking", "beautiful", "handsome"],
+        "suggestion": "Only mention appearance if strictly relevant to the role."
     },
     "Exclusionary Language": {
-        "words": [
-            "must be", "only", "exclusively", "no exceptions",
-            "strictly", "mandatory background", "specific religion",
-            "specific sect", "caste", "prefer married"
-        ],
-        "color": "#FFA500",
-        "suggestion": "Use inclusive language that welcomes diverse candidates. Avoid absolute requirements unless essential."
+        "words": ["must be", "only", "exclusively", "no exceptions", "strictly",
+                  "mandatory background", "specific religion", "caste", "no freshers",
+                  "no beginners", "experienced only"],
+        "suggestion": "Use inclusive language that welcomes diverse candidates."
     }
 }
 
-def detect_bias(text: str) -> tuple:
-    """Detect bias in job description text"""
+def detect_bias(job_description: str) -> dict:
+    text_lower = job_description.lower()
     found_biases = {}
-    text_lower = text.lower()
+    biased_count = 0
+    clean_count = 0
     
-    for bias_type, data in BIAS_DICT.items():
+    for bias_type, pattern in BIAS_PATTERNS.items():
         found_words = []
-        for word in data["words"]:
-            if word.lower() in text_lower:
+        for word in pattern["words"]:
+            if word in text_lower:
                 found_words.append(word)
+        
         if found_words:
             found_biases[bias_type] = {
                 "words": found_words,
-                "color": data["color"],
-                "suggestion": data["suggestion"]
+                "suggestion": pattern["suggestion"]
             }
+            biased_count += 1
+        else:
+            clean_count += 1
     
-    total_checks = len(BIAS_DICT)
-    biased_count = len(found_biases)
-    clean_count = total_checks - biased_count
-    fairness_score = round(((total_checks - biased_count) / total_checks) * 100)
+    total_categories = len(BIAS_PATTERNS)
+    fairness_score = int(((total_categories - biased_count) / total_categories) * 100)
     
     if fairness_score >= 80:
-        progress_message = "This job description is largely bias-free"
+        verdict = "Largely bias-free"
     elif fairness_score >= 60:
-        progress_message = "This job description has some bias - review highlighted issues"
+        verdict = "Some bias detected"
     else:
-        progress_message = "This job description has significant bias - major revision needed"
+        verdict = "Significant bias - major revision needed"
     
-    clean_categories = [bias_type for bias_type in BIAS_DICT if bias_type not in found_biases]
-    
-    return found_biases, fairness_score, biased_count, clean_count, progress_message, clean_categories
+    return {
+        "fairness_score": fairness_score,
+        "biased_count": biased_count,
+        "clean_count": clean_count,
+        "found_biases": found_biases,
+        "verdict": verdict
+    }

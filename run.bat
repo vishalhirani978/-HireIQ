@@ -1,12 +1,16 @@
 @echo off
-echo Starting HireIQ...
+echo Starting HireIQ Application...
 echo.
-echo Starting Backend (FastAPI) on port 8000...
-start "Backend" cmd /k "cd /d %~dp0backend && python -m uvicorn main:app --port 8000"
-timeout /t 2 /nobreak >nul
+echo Starting Backend Server on port 8000...
+start cmd /k "cd backend && pip install -r requirements.txt > nul 2>&1 && uvicorn main:app --reload --port 8000"
+
+timeout /t 3 /nobreak > nul
+
+echo Starting Frontend Server on port 3000...
+start cmd /k "cd frontend && npm start"
+
 echo.
-echo Starting Frontend (React) on port 3000...
-start "Frontend" cmd /k "cd /d %~dp0frontend && npm start"
-echo.
-echo Done! Open http://localhost:3000 in your browser
+echo HireIQ is starting up!
+echo Backend: http://localhost:8000
+echo Frontend: http://localhost:3000
 pause

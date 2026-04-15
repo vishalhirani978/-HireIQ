@@ -1,23 +1,31 @@
-# Bias Detector Router
 from fastapi import APIRouter, HTTPException
-from models.schemas import BiasRequest, BiasResponse
+from pydantic import BaseModel
+from typing import Dict, List
 from services.bias_checker import detect_bias
 
 router = APIRouter()
 
-@router.post("/detect-bias", response_model=BiasResponse)
-async def detect_bias_in_jd(request: BiasRequest):
-    """Detect bias in a job description"""
+class BiasDetectionRequest(BaseModel):
+    job_description: str
+
+class BiasType(BaseModel):
+    words: List[str]
+    suggestion: str
+
+class BiasDetectionResponse(BaseModel):
+    fairness_score: int
+    biased_count: int
+    clean_count: int
+    found_biases: Dict[str, BiasType]
+
+@router.post("/detect-bias", response_model=BiasDetectionResponse)
+async def detect_job_bias(request: BiasDetectionRequest):
     try:
-        found_biases, fairness_score, biased_count, clean_count, progress_message, clean_categories = detect_bias(request.job_desc)
+        if not request.job_description.strip():
+            raise HTTPException(status_code=400, detail="Job description is required")
         
-        return BiasResponse(
-            found_biases=found_biases,
-            fairness_score=fairness_score,
-            biased_count=biased_count,
-            clean_count=clean_count,
-            progress_message=progress_message,
-            clean_categories=clean_categories
-        )
+        result = detect_bias(request.job_description)
+        
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

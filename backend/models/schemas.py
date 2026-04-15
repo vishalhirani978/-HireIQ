@@ -1,67 +1,67 @@
-# Pydantic Schemas
 from pydantic import BaseModel
 from typing import List, Optional
 
-class CVScreenRequest(BaseModel):
-    job_desc: str
-    cv_text: str
+class CVScreeningRequest(BaseModel):
+    job_description: str
+    candidate_cv: str
 
-class CVScreenResponse(BaseModel):
+class CVScreeningResponse(BaseModel):
     score: float
     percentage: float
     matched_skills: List[str]
     missing_skills: List[str]
+    matched_count: int
+    missing_count: int
     recommendation: str
     ai_analysis: str
     score_class: str
     score_label: str
-    score_color: str
 
-class Candidate(BaseModel):
+class CandidateInput(BaseModel):
     name: str
     cv: str
 
-class CompareRequest(BaseModel):
-    job_desc: str
-    candidates: List[Candidate]
+class CompareCandidatesRequest(BaseModel):
+    job_description: str
+    candidates: List[CandidateInput]
 
 class CandidateResult(BaseModel):
     name: str
     score: float
     matched: int
     missing: int
+    matched_skills: List[str]
+    missing_skills: List[str]
     verdict: str
-    score_color: str
 
-class CompareResponse(BaseModel):
+class CompareCandidatesResponse(BaseModel):
     results: List[CandidateResult]
 
-class QuestionsRequest(BaseModel):
-    job_desc: str
-    cv_text: str
-    difficulty: str = "Medium"
-    num_questions: int = 5
+class InterviewRequest(BaseModel):
+    job_description: str
+    candidate_cv: str
+    difficulty: str
+    num_questions: int
 
-class QuestionsResponse(BaseModel):
+class InterviewResponse(BaseModel):
+    total: int
+    difficulty: str
     gap_questions: List[str]
     verify_questions: List[str]
     difficulty_questions: List[str]
     gap_count: int
     verify_count: int
     difficulty_count: int
-    total: int
 
-class BiasRequest(BaseModel):
-    job_desc: str
+class BiasDetectionRequest(BaseModel):
+    job_description: str
 
-class BiasWord(BaseModel):
+class BiasType(BaseModel):
     words: List[str]
     suggestion: str
 
-class BiasResponse(BaseModel):
-    found_biases: dict
-    fairness_score: float
+class BiasDetectionResponse(BaseModel):
+    fairness_score: int
     biased_count: int
     clean_count: int
-    progress_message: str
-    clean_categories: List[str]
+    found_biases: dict
