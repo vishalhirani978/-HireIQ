@@ -100,6 +100,7 @@ All AI processing runs entirely in the browser — no backend needed:
 | React | 18.3.1 |
 | Recharts | 2.15.4 |
 | Lucide React | 0.294.0 |
+| Axios | 1.14.0 |
 | Custom CSS | Dark theme |
 
 ---
@@ -150,7 +151,7 @@ Scans job descriptions for 5 types of bias:
 
 ```bash
 git clone https://github.com/vishalhirani978/-HireIQ
-cd HireIQ/frontend
+cd "-HireIQ/frontend"
 npm install
 npm start
 ```
