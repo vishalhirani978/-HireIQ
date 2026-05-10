@@ -13,6 +13,9 @@
 > fairer and smarter.
 
 **Live Demo:** https://hire-iq-xi.vercel.app/
+## Demo Video
+## Demo Video
+[Watch HireIQ Demo on YouTube](https://youtu.be/jg04FcyjuoM)
 
 ---
 
